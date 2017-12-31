@@ -11,13 +11,14 @@
 volatile boolean isRunning = false;
 int ledPin = 13;
 //IntervalTimer noteOnTimer;
-IntervalTimer noteOffTimer;
+static IntervalTimer noteOffTimer;
 //IntervalTimer noteSetTimer;
 
-IntervalTimer stepTimer;
+static IntervalTimer stepTimer;
 volatile prog_uint8_t currentStep = 0;
 volatile prog_uint8_t lastNote = 0;
 int bpm = 80;
+bool bpmChanged = false;
 int stepLengthMicroseconds = (60.0 / (bpm * 4)) * 1000 * 1000;
 
 
@@ -66,9 +67,9 @@ void setup() {
 unsigned long count = 0;
 // the loop function runs over and over again until power down or reset
 void loop() {
-	unsigned long start = millis();
+	//unsigned long start = millis();
 	readValues();
-	unsigned long end = millis();
+	//unsigned long end = millis();
 	//Serial.println(count);
 	count++;
 	delay(100);
@@ -103,24 +104,25 @@ void start() {
 		isRunning = !isRunning;
 		last_interrupt_time = interrupt_time;
 	}
-	
+
 }
 
 void setBpm(prog_uint8_t newBpm) {
 	static unsigned long last_time_setBpm = 0;
 	unsigned long set_time = millis();
-	if (set_time - last_time_setBpm > 500)
+	if (set_time - last_time_setBpm > 1)
 	{
 		if (newBpm != bpm) {
 			bpm = newBpm;
 			stepLengthMicroseconds = (60.0 / (bpm * 4)) * 1000 * 1000;
-			if (isRunning) {
+			bpmChanged = true;
+			/*if (isRunning) {
 				stepTimer.begin(nextStep, stepLengthMicroseconds);
-			}
+			}*/
 		}
 		last_time_setBpm = set_time;
 	}
-	
+
 }
 
 void sendMidi(int cmd, int pitch, int velocity) {
@@ -138,6 +140,7 @@ void sendMidi(int cmd, int pitch, int velocity) {
 
 void nextStep() {
 	//noteOff(lastNote);
+
 	int note = notes[currentStep];
 	noteOn(note, 127, 100);
 	lastNote = note;
@@ -149,15 +152,20 @@ void nextStep() {
 	if (currentStep == 16) {
 		currentStep = 0;
 	}
+	if (bpmChanged) {
+		bpmChanged = false;
+		//stepTimer.end();
+		stepTimer.begin(nextStep, stepLengthMicroseconds);
+	}
 }
 
 void noteOn(int pitch, int velocity, int lengthMs)
 {
 	sendMidi(0x90, pitch, velocity);
-	IntervalTimer noteOffTimer;
+	//IntervalTimer noteOffTimer;
 }
 
-void noteOff() {
+void noteOff() {	
 	noteOff(lastNote);
 	noteOffTimer.end();
 }
@@ -174,8 +182,8 @@ double bpmToMicroseconds(int bpm)
 
 
 void readValues() {
-	long starttime = millis();
-	int values[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	//long starttime = millis();
+	//int values[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 	digitalWrite(11, HIGH);
 	digitalWrite(11, LOW);
 
@@ -197,14 +205,14 @@ void readValues() {
 			{
 				lowByte = buffer[i];
 				highByte = buffer[i + 1];
-				values[count] = highByte * 256 + lowByte;
+				//values[count] = highByte * 256 + lowByte;
 				count++;
 			}
 		}
 		done = count == 17;
 	}
 
-	long endtime = millis();
+	//long endtime = millis();
 	if (done) {
 		/*for (size_t i = 0; i < 16; i++)
 		{

@@ -121,7 +121,7 @@ void readBpm() {
 		diff = diff * -1;
 	}
 	//Serial.println(diff);
-	if (diff < 5) {
+	if (diff < 10) {
 		bpmRaw = (bpmRaw * 14) + (value * 2);
 		bpmRaw = (bpmRaw + 8) >> 4;
 	}
