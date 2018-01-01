@@ -8,6 +8,9 @@
 
 //MIDI_CREATE_DEFAULT_INSTANCE();
 
+#include "NoteToPitch.h"
+#include "MidiHelper.h"
+#include "MidiSequencer.h"
 volatile boolean isRunning = false;
 int ledPin = 13;
 //IntervalTimer noteOnTimer;
@@ -31,7 +34,7 @@ volatile int note = 100;
 int steps = 16;
 //volatile int currentStep = 1;
 // 60 => C4, 63 => Eb, 67 => G, 72 => C5
-int notes[] = { 60,63,67,72,60,72,63,60,67,60,72,67,60,63,67,72 };
+int notes[] = { C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4 };
 
 #define MIDISERIAL Serial1	//RX 0, TX 1 -> MIDI
 #define HWSERIAL Serial2	// RX 9, TX 10 -> Arduino Link
@@ -165,7 +168,7 @@ void noteOn(int pitch, int velocity, int lengthMs)
 	//IntervalTimer noteOffTimer;
 }
 
-void noteOff() {	
+void noteOff() {
 	noteOff(lastNote);
 	noteOffTimer.end();
 }
