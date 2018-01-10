@@ -11,6 +11,7 @@
 #include "NoteToPitch.h"
 #include "MidiHelper.h"
 #include "MidiSequencer.h"
+#include "WString.h"
 volatile boolean isRunning = false;
 int ledPin = 13;
 //IntervalTimer noteOnTimer;
@@ -21,8 +22,79 @@ static IntervalTimer stepTimer;
 volatile prog_uint8_t currentStep = 0;
 volatile prog_uint8_t lastNote = 0;
 int bpm = 80;
+float gate = 0.8;
 bool bpmChanged = false;
 int stepLengthMicroseconds = (60.0 / (bpm * 4)) * 1000 * 1000;
+int base = G3;
+bool transmode = true;
+
+
+volatile int currentPattern = 0;
+int patterncount = 4;
+
+int transmodes[] = { 1,6,5,4 };
+volatile int mode = 0; //0=all notes(1-12), 1=Ionian, 2=Dorian, 3=Phrygian, 4=Lydian, 5=Mixolydian, 6=Aeolian, 7=Locrian
+int ionian[] = { 0,2,4,5,7,9,11,12 };
+int dorian[] = { 0,2,3,5,7,9,10,12 };
+int phygian[] = { 0,1,3,5,7,8,10,12 };
+int lydian[] = { 0,2,4,6,7,9,11,12 };
+int mixolydian[] = { 0,2,4,5,7,9,10,12 };
+int aeolian[] = { 0,2,3,5,7,8,10,12 };
+int locrian[] = { 0,1,3,5,6,8,10,12 };
+
+String notes_s[12] = { "C","C#","D","D#","E","F","F#","G","G#","A","A#","B" };
+String modes[7] = { "ionian", "dorian", "phrygian", "lydian", "mixolydian","aeolian","locrian" };
+int intervals[7][7] = {
+	{ 2,2,1,2,2,2,1 }, // ionian
+	{ 2,1,2,2,2,1,2 }, // dorian
+	{ 1,2,2,2,1,2,2 }, // phrygian
+	{ 2,2,2,1,2,2,1 }, // lydian
+	{ 2,2,1,2,2,1,2 }, // mixolydian
+	{ 2,1,2,2,1,2,2 }, // aeolian
+	{ 1,2,2,1,2,2,2 }  // locrian
+};
+
+// stufe = 0-6, note=1-12
+int transpose(int mode, int stufe, int note, int baseNote) {
+	note--; // reduce to start by 0
+
+	int noteInMode = 0;
+	for (int i = 0; i < note; i++)
+	{
+		noteInMode += intervals[mode][i];
+	}
+
+	for (int i = 0; i < (stufe - 1); i++)
+	{
+		int y = i + mode;
+		if (y > 6) {
+			y = y - 7;
+		}
+		noteInMode += intervals[y][note];
+
+	}
+	return noteInMode + baseNote;
+}
+
+int getNote(int mode, int note) {
+	note--; // reduce to start by 0
+
+	int noteInMode = 0;
+	for (int i = 0; i < note; i++)
+	{
+		noteInMode += intervals[mode][i];
+	}
+
+	return noteInMode;
+}
+
+String convertToNote(int note)
+{
+	if (note > 11) {
+		note = note - 12;
+	}
+	return notes_s[note];
+}
 
 
 
@@ -31,10 +103,11 @@ volatile double noteLength = 10;
 volatile int note = 100;
 //volatile int lastNote = 100;
 
-int steps = 16;
+int steps = 64;
 //volatile int currentStep = 1;
 // 60 => C4, 63 => Eb, 67 => G, 72 => C5
-int notes[] = { C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4 };
+//int notes[] = { C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4 };
+int notes[] = { 1,3,5,3,6,5,3,5,1,3,5,3,6,5,3,5 };
 
 #define MIDISERIAL Serial1	//RX 0, TX 1 -> MIDI
 #define HWSERIAL Serial2	// RX 9, TX 10 -> Arduino Link
@@ -142,18 +215,67 @@ void sendMidi(int cmd, int pitch, int velocity) {
 }
 
 void nextStep() {
-	//noteOff(lastNote);
+	mode = 0;// transmodes[currentPattern];
+	int note = notes[currentStep] - 1;
 
-	int note = notes[currentStep];
+
+
+	note = transpose(mode, transmodes[currentPattern], note + 1, 0);
+	Serial.println(convertToNote(note));
+	//Serial.print("Mode: ");
+	//Serial.println(mode);
+	/*switch (mode)
+	{
+	case 1:
+		note = base + ionian[note];
+		break;
+	case 2:
+		note = base + dorian[note];
+		break;
+	case 3:
+		note = base + phygian[note];
+		break;
+	case 4:
+		note = base + lydian[note];
+		break;
+	case 5:
+		note = base + mixolydian[note];
+		break;
+	case 6:
+		note = base + aeolian[note];
+		break;
+	case 7:
+		note = base + locrian[note];
+		break;
+	default:
+		break;
+	}*/
+	note = note + base;
 	noteOn(note, 127, 100);
 	lastNote = note;
 	noteOffTimer.end();
-	noteOffTimer.begin(noteOff, stepLengthMicroseconds - 100);
-	//delayMicroseconds(stepLengthMicroseconds);
-	//noteOff(note);
+	noteOffTimer.begin(noteOff, (stepLengthMicroseconds*gate) - 10);
 	currentStep++;
-	if (currentStep == 16) {
+
+	//Serial.println(currentStep);
+
+
+	if (currentStep % 16 == 0) {
+		currentPattern++;
+		if (transmode) {
+			//Serial.println("Reset");
+			currentStep = 0;
+		}
+	}
+
+	if (currentPattern == patterncount)
+	{
+		currentPattern = 0;
+	}
+
+	if (currentStep == steps) {
 		currentStep = 0;
+		currentPattern = 0;
 	}
 	if (bpmChanged) {
 		bpmChanged = false;
@@ -192,7 +314,7 @@ void readValues() {
 
 	int count = 0;
 	long start = millis();
-	unsigned long timeout = start + 800;
+	unsigned long timeout = start + 100;
 	bool done = false;
 
 	while (done == false && timeout > millis()) {

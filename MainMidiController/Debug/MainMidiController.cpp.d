@@ -40,5 +40,6 @@ C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\Mai
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\NoteToPitch.h \
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiHelper.h \
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiSequencer.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WString.h \
  D:\Program\ Files\ (x86)\Microsoft\ Visual\ Studio\2017\Community\Common7\IDE\Extensions\pbd1usl1.2ll\Micro\ Platforms\default\debuggers\VM_DBG/VM_DBG.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Arduino.h

@@ -11,7 +11,7 @@
 #endif
 */
 
-class MidiSequencerClass
+class MidiSequencer
 {
  protected:
 private:
@@ -27,13 +27,13 @@ int _volumes[64];
  void stop();
  void setBpm(int bpm);
  int *getVolumes(int values[64]);
- int *getNotes()int notes[64]);
+ int *getNotes(int notes[64]);
  void setVolumes(int values[64]);
  void setNotes(int notes[64]);
 	//void init();
 };
 
-extern MidiSequencerClass MidiSequencer;
+//extern MidiSequencer MidiSequencer;
 
 #endif
 
