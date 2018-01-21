@@ -1,5 +1,5 @@
-C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MainMidiController.cpp.o: \
- C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MainMidiController.cpp \
+C:\Users\thoma\AppData\Local\Temp\VMBuilds\Teensy_Test\teensy35\Debug\Teensy_Test.cpp.o: \
+ C:\Users\thoma\AppData\Local\Temp\VMBuilds\Teensy_Test\teensy35\Debug\Teensy_Test.cpp \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/wprogram.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/avr/pgmspace.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/avr/interrupt.h \
@@ -37,19 +37,17 @@ C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\Mai
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Arduino.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WProgram.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/IntervalTimer.h \
- d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Bounce2/Bounce2.h \
- C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\NoteToPitch.h \
- C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiHelper.h \
- C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiSequencer.h \
- d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WString.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\SPI/SPI.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Arduino.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/DMAChannel.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/EventResponder.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Wire/Wire.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Wire/WireKinetis.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/Adafruit_GFX.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Print.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/gfxfont.h \
  D:\Benutzer\Thomas\Dokumente\Arduino\libraries\Adafruit_SSD1306/Adafruit_SSD1306.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WString.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/Encoder.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/utility/direct_pin_read.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/utility/interrupt_pins.h \

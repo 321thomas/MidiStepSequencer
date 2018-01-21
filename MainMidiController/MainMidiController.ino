@@ -8,10 +8,49 @@
 
 //MIDI_CREATE_DEFAULT_INSTANCE();
 
+#include "Bounce2.h"
 #include "NoteToPitch.h"
 #include "MidiHelper.h"
 #include "MidiSequencer.h"
 #include "WString.h"
+#include <SPI.h>
+//#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Encoder.h>
+
+/* I/O */
+// If using software SPI (the default case):
+#define OLED_MOSI1   19  // D1
+#define OLED_CLK1   20   // D0
+#define OLED_DC1    22    // A0
+#define OLED_CS1    21
+#define OLED_RESET1 23
+
+#define OLED_MOSI2   19  // D1
+#define OLED_CLK2   20   // D0
+#define OLED_DC2    17    // A0
+#define OLED_CS2    16
+#define OLED_RESET2 18
+
+#define START_STOP 15
+#define MODE_CHANGE 14
+#define BASE_NOTE_CHANGE 37
+#define PATTERN_LENGHT_CHANGE 38
+
+Bounce btnStartStop = Bounce();
+
+Adafruit_SSD1306 display1(OLED_MOSI1, OLED_CLK1, OLED_DC1, OLED_RESET1, OLED_CS1);
+Adafruit_SSD1306 display2(OLED_MOSI2, OLED_CLK2, OLED_DC2, OLED_RESET2, OLED_CS2);
+
+// Encoders
+Encoder encBpm(33, 34);
+Encoder encValue(35, 36);
+int oldEncoderValues[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+int newEncoderValues[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+/* I/O END*/
+
 volatile boolean isRunning = false;
 int ledPin = 13;
 //IntervalTimer noteOnTimer;
@@ -25,7 +64,7 @@ int bpm = 80;
 float gate = 0.8;
 bool bpmChanged = false;
 int stepLengthMicroseconds = (60.0 / (bpm * 4)) * 1000 * 1000;
-int base = G3;
+int base = C3;
 bool transmode = true;
 
 
@@ -118,7 +157,7 @@ void setup() {
 	/*pinMode(2, INPUT);
 	pinMode(3, OUTPUT);
 */
-	pinMode(2, INPUT_PULLDOWN); // start/stop
+	pinMode(START_STOP, INPUT_PULLDOWN); // start/stop
 	attachInterrupt(2, start, FALLING);
 
 
@@ -137,6 +176,17 @@ void setup() {
 	HWSERIAL.begin(115200);
 	Serial.println("Starting...");
 	//unsigned long t1 = millis();
+
+	// by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+	display1.begin(SSD1306_SWITCHCAPVCC);
+	display2.begin(SSD1306_SWITCHCAPVCC);
+
+	display1.clearDisplay();
+	display1.setTextColor(WHITE);
+	display1.setCursor(0, 0);
+	display1.setTextSize(2);
+	display1.println("Starting...");
+	display1.display();
 
 }
 
