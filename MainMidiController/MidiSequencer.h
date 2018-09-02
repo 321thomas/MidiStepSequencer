@@ -22,7 +22,7 @@ int _notes[64];
 int _volumes[64];
 
  public:
- MidiSequencer();
+ MidiSequencer(int midiInPin, int midiOutPin);
  void start();
  void stop();
  void setBpm(int bpm);

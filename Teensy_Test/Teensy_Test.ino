@@ -13,20 +13,20 @@
 #include <Encoder.h>
 
 // If using software SPI (the default case):
-#define OLED_MOSI1   19  // D1
-#define OLED_CLK1   20   // D0
-#define OLED_DC1    22    // A0
-#define OLED_CS1    21
-#define OLED_RESET1 23
+#define OLED_MOSI1   20  // D1
+#define OLED_CLK1   21   // D0
+#define OLED_DC1    18    // A0
+#define OLED_CS1    17
+#define OLED_RESET1 19
 
-#define OLED_MOSI2   19  // D1
-#define OLED_CLK2   20   // D0
-#define OLED_DC2    17    // A0
-#define OLED_CS2    16
-#define OLED_RESET2 18
+#define OLED_MOSI2   20  // D1
+#define OLED_CLK2   21  // D0
+#define OLED_DC2    23    // A0
+#define OLED_CS2    22
+#define OLED_RESET2 19
 
-Adafruit_SSD1306 display1(OLED_MOSI1, OLED_CLK1, OLED_DC1, OLED_RESET1, OLED_CS1);
-Adafruit_SSD1306 display2(OLED_MOSI2, OLED_CLK2, OLED_DC2, OLED_RESET2, OLED_CS2);
+Adafruit_SSD1306 display2(OLED_MOSI1, OLED_CLK1, OLED_DC1, OLED_RESET1, OLED_CS1);
+Adafruit_SSD1306 display1(OLED_MOSI2, OLED_CLK2, OLED_DC2, OLED_RESET2, OLED_CS2);
 
 // Encoders
 Encoder encBpm(33, 34);
@@ -59,20 +59,23 @@ void setup() {
 	Serial.begin(9600);
 
 	// by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
-	display1.begin(SSD1306_SWITCHCAPVCC);
 	display2.begin(SSD1306_SWITCHCAPVCC);
+	display1.begin(SSD1306_SWITCHCAPVCC, 0, false);
 }
 
+long t1;
 // the loop function runs over and over again until power down or reset
 void loop() {
 	long newPosPbm = encBpm.read();
 	long newPos2Value = encValue.read();
-
-	if (newPosPbm != oldPosBpm)
+	
+	if (newPosPbm != oldPosBpm || true)
 	{
 		valBpm = valBpm + (newPosPbm - oldPosBpm);
 		if (valBpm >= 0) {
-			long t1 = map(valBpm, 0, 999, 0, 200);
+			//long t1; = map(valBpm, 0, 800, 0, 200);
+
+			t1++;
 			oldPosBpm = valBpm;
 			display1.clearDisplay();
 			display1.setTextColor(WHITE);
@@ -88,6 +91,15 @@ void loop() {
 			display1.println("ioanian C3");
 			display1.println("Pattern 21");
 			display1.display();
+
+
+			display2.clearDisplay();
+			display2.setTextColor(WHITE);
+			display2.setCursor(0, 0);
+			display2.setTextSize(3);
+			display2.println("TEST");
+			display2.display();
+
 		}
 		else {
 			valBpm = 0;
@@ -97,50 +109,27 @@ void loop() {
 	}
 	if (newPos2Value != oldPosValue)
 	{
-		valValue = valValue + (newPos2Value - oldPosValue);
-		if (valValue >= 0) {
-			oldPosValue = newPos2Value;
+		//valValue = valValue + (newPos2Value - oldPosValue);
+		//if (valValue >= 0) {
+			/*oldPosValue = newPos2Value;
 			display2.clearDisplay();
 			display2.setTextColor(WHITE);
 			display2.setCursor(0, 0);
 			display2.setTextSize(3);
 			display2.println(valValue);
-			display2.display();
-		}
+			display2.display();*/
+		/*}
 		else {
 			valValue = 0;
 			encValue.write(0);
 			oldPosValue = 0;
-		}
+		}*/
 	}
 
 
 
-	/*for (size_t i = 0; i < 16; i++)
-	{
-		long newPosition = myEnc.read();
-		if (newPosition != oldPosition) {
-			oldPosition = newPosition;
-		}
 
-		display.clearDisplay();
-		display.setTextColor(WHITE);
-		display.setCursor(0, 0);
-
-		display.setTextSize(3);
-
-		display.println((String)oldPosition + " BPM");
-		display.setTextSize(1);
-
-		display.print("1/" + ((String)(i + 1)));
-		display.println("   1/4  IIV");
-		display.println("ioanian C3");
-		display.println("Pattern 21");
-		display.display();
-		delay(300);
-
-	}*/
-	delay(20);
+	delay(80);
 
 	//display.clearDisplay();
 }

@@ -20,18 +20,23 @@
 #include <Encoder.h>
 
 /* I/O */
-// If using software SPI (the default case):
-#define OLED_MOSI1   19  // D1
-#define OLED_CLK1   20   // D0
-#define OLED_DC1    22    // A0
-#define OLED_CS1    21
-#define OLED_RESET1 23
 
-#define OLED_MOSI2   19  // D1
-#define OLED_CLK2   20   // D0
-#define OLED_DC2    17    // A0
-#define OLED_CS2    16
-#define OLED_RESET2 18
+// Displays
+// If using software SPI (the default case):
+#define OLED_MOSI1   20  // D1
+#define OLED_CLK1   21   // D0
+#define OLED_DC1    18    // A0
+#define OLED_CS1    17
+#define OLED_RESET1 19
+
+#define OLED_MOSI2   20  // D1
+#define OLED_CLK2   21  // D0
+#define OLED_DC2    23    // A0
+#define OLED_CS2    22
+#define OLED_RESET2 19
+
+Adafruit_SSD1306 display2(OLED_MOSI1, OLED_CLK1, OLED_DC1, OLED_RESET1, OLED_CS1);
+Adafruit_SSD1306 display1(OLED_MOSI2, OLED_CLK2, OLED_DC2, OLED_RESET2, OLED_CS2);
 
 #define START_STOP 15
 #define MODE_CHANGE 14
@@ -39,9 +44,6 @@
 #define PATTERN_LENGHT_CHANGE 38
 
 Bounce btnStartStop = Bounce();
-
-Adafruit_SSD1306 display1(OLED_MOSI1, OLED_CLK1, OLED_DC1, OLED_RESET1, OLED_CS1);
-Adafruit_SSD1306 display2(OLED_MOSI2, OLED_CLK2, OLED_DC2, OLED_RESET2, OLED_CS2);
 
 // Encoders
 Encoder encBpm(33, 34);
@@ -61,18 +63,23 @@ static IntervalTimer stepTimer;
 volatile prog_uint8_t currentStep = 0;
 volatile prog_uint8_t lastNote = 0;
 int bpm = 80;
-float gate = 0.8;
+float gate = 0.7;
 bool bpmChanged = false;
 int stepLengthMicroseconds = (60.0 / (bpm * 4)) * 1000 * 1000;
-int base = C3;
+int base = A3;
 bool transmode = true;
 
 
 volatile int currentPattern = 0;
-int patterncount = 4;
 
-int transmodes[] = { 1,6,5,4 };
-volatile int mode = 0; //0=all notes(1-12), 1=Ionian, 2=Dorian, 3=Phrygian, 4=Lydian, 5=Mixolydian, 6=Aeolian, 7=Locrian
+
+int transmodes[] = {1,1,3,3,6,6,4,5 };// { 1, 3, 6, 5 };
+volatile int mode = 1; //0=all notes(1-12), 1=Ionian, 2=Dorian, 3=Phrygian, 4=Lydian, 5=Mixolydian, 6=Aeolian, 7=Locrian
+int notes[] = { 1,1,8,1,1,8,1,8 };// { 1, 3, 5, 3, 6, 5, 3, 5, 1, 3, 5, 3, 6, 5, 3, 5 };
+int steps = 8;
+int patterncount = sizeof(transmodes) / sizeof(int);
+
+int chrom[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12 };
 int ionian[] = { 0,2,4,5,7,9,11,12 };
 int dorian[] = { 0,2,3,5,7,9,10,12 };
 int phygian[] = { 0,1,3,5,7,8,10,12 };
@@ -83,7 +90,8 @@ int locrian[] = { 0,1,3,5,6,8,10,12 };
 
 String notes_s[12] = { "C","C#","D","D#","E","F","F#","G","G#","A","A#","B" };
 String modes[7] = { "ionian", "dorian", "phrygian", "lydian", "mixolydian","aeolian","locrian" };
-int intervals[7][7] = {
+int intervals[8][11] = {
+	{1,1,1,1,1,1,1,1,1,1,1},
 	{ 2,2,1,2,2,2,1 }, // ionian
 	{ 2,1,2,2,2,1,2 }, // dorian
 	{ 1,2,2,2,1,2,2 }, // phrygian
@@ -96,22 +104,53 @@ int intervals[7][7] = {
 // stufe = 0-6, note=1-12
 int transpose(int mode, int stufe, int note, int baseNote) {
 	note--; // reduce to start by 0
-
 	int noteInMode = 0;
+	int index = 0;
 	for (int i = 0; i < note; i++)
 	{
-		noteInMode += intervals[mode][i];
+
+		noteInMode += intervals[mode][index];
+		index++;
+		if (intervals[mode][index] < 1) {
+			index = 0;
+		}
+
+
+		//if (index == sizeof(intervals[mode]))
+		//{
+		//	index = 0;
+		//}
+		//else
+		//{
+		//	index++;
+		//}
 	}
 
+	//index = 0;
+	int offsetStufe = 0;
+	index = 0;
 	for (int i = 0; i < (stufe - 1); i++)
 	{
-		int y = i + mode;
+
+		offsetStufe += intervals[mode][index];
+		index++;
+		if (intervals[mode][index] < 1) {
+			index = 0;
+		}
+		/*int y = i + mode;
 		if (y > 6) {
 			y = y - 7;
-		}
-		noteInMode += intervals[y][note];
+		}*/
+		/*noteInMode += intervals[index][note];
+		index++;
+		if (intervals[mode][index] < 1) {
+			index = 0;
+		}*/
 
 	}
+
+	noteInMode += offsetStufe;
+
 	return noteInMode + baseNote;
 }
 
@@ -142,16 +181,16 @@ volatile double noteLength = 10;
 volatile int note = 100;
 //volatile int lastNote = 100;
 
-int steps = 64;
+
 //volatile int currentStep = 1;
 // 60 => C4, 63 => Eb, 67 => G, 72 => C5
 //int notes[] = { C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4,C4,E4b,G4,C4,C5,C4,C5,G4,C4,G4,E4b,C5,G4,C4,C5,G4 };
-int notes[] = { 1,3,5,3,6,5,3,5,1,3,5,3,6,5,3,5 };
-
-#define MIDISERIAL Serial1	//RX 0, TX 1 -> MIDI
-#define HWSERIAL Serial2	// RX 9, TX 10 -> Arduino Link
 
 
+#define MIDISERIAL Serial2	// RX 9, TX 10 -> MIDI
+#define HWSERIAL Serial1	//RX 0, TX 1 -> Arduino Link
+
+int led = 13; // internal LED
 // the setup function runs once when you press reset or power the board
 void setup() {
 	/*pinMode(2, INPUT);
@@ -178,8 +217,8 @@ void setup() {
 	//unsigned long t1 = millis();
 
 	// by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
-	display1.begin(SSD1306_SWITCHCAPVCC);
 	display2.begin(SSD1306_SWITCHCAPVCC);
+	display1.begin(SSD1306_SWITCHCAPVCC, 0, false);
 
 	display1.clearDisplay();
 	display1.setTextColor(WHITE);
@@ -188,11 +227,25 @@ void setup() {
 	display1.println("Starting...");
 	display1.display();
 
+	display2.clearDisplay();
+	display2.setTextColor(WHITE);
+	display2.setCursor(0, 0);
+	display2.setTextSize(3);
+	display2.println("....");
+	display2.display();
+
+	pinMode(led, OUTPUT);
+	//setBpm(100);
+	start();
+
 }
 
 unsigned long count = 0;
-// the loop function runs over and over again until power down or reset
+// the loop function runs over and   over again until power down or reset
 void loop() {
+
+
+
 	//unsigned long start = millis();
 	readValues();
 	//unsigned long end = millis();
@@ -265,13 +318,16 @@ void sendMidi(int cmd, int pitch, int velocity) {
 }
 
 void nextStep() {
-	mode = 0;// transmodes[currentPattern];
-	int note = notes[currentStep] - 1;
-
+	//mode = 1;// transmodes[currentPattern];
+	int index = currentStep % (sizeof(notes) / sizeof(int));
+	/*if (currentStep == sizeof(notes)/sizeof(int)) {
+		index = 0;
+	}*/
+	int note = notes[index] - 1;
 
 
 	note = transpose(mode, transmodes[currentPattern], note + 1, 0);
-	Serial.println(convertToNote(note));
+	//Serial.println(convertToNote(note));
 	//Serial.print("Mode: ");
 	//Serial.println(mode);
 	/*switch (mode)
@@ -310,7 +366,7 @@ void nextStep() {
 	//Serial.println(currentStep);
 
 
-	if (currentStep % 16 == 0) {
+	if (currentStep % steps == 0) {
 		currentPattern++;
 		if (transmode) {
 			//Serial.println("Reset");
@@ -396,7 +452,7 @@ void readValues() {
 	}
 	else
 	{
-		Serial.println("Timeout!");
+		//Serial.println("Timeout!");
 	}
 
 	//Serial.print("Duration [ms]:\t");

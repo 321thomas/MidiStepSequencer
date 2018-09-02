@@ -16,7 +16,7 @@
 #define __HARDWARE_MK64FX512__
 #define _VMDEBUG 1
 #define __MK64FX512__
-#define TEENSYDUINO 140
+#define TEENSYDUINO 141
 #define ARDUINO 10805
 #define F_CPU 120000000
 #define USB_SERIAL

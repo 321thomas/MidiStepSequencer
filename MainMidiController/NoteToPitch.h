@@ -69,7 +69,7 @@
 #define B2  47
 #define B2b 46
 #define A2  45
-#define A6b 44
+#define A2b 44
 #define G2  43
 #define G2b 42
 #define F2  41
@@ -79,7 +79,7 @@
 #define D2b 37
 #define C2  36
 
-#define B1  35
+#define B_1  35
 #define B1b 34
 #define A1  33
 #define A1b 32
@@ -92,6 +92,6 @@
 #define D1b 25
 #define C1  24
 
-#define B0  23
+#define B_0  23
 #define B0b 22
 #define A0 21

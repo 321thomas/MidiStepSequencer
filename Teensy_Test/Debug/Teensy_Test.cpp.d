@@ -46,7 +46,7 @@ C:\Users\thoma\AppData\Local\Temp\VMBuilds\Teensy_Test\teensy35\Debug\Teensy_Tes
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/Adafruit_GFX.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Print.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/gfxfont.h \
- D:\Benutzer\Thomas\Dokumente\Arduino\libraries\Adafruit_SSD1306/Adafruit_SSD1306.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_SSD1306/Adafruit_SSD1306.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WString.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/Encoder.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/utility/direct_pin_read.h \

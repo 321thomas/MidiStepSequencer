@@ -37,7 +37,7 @@ C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\Mai
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Arduino.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/WProgram.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/IntervalTimer.h \
- d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Bounce2/Bounce2.h \
+ D:\Benutzer\Thomas\Dokumente\Arduino\libraries\Bounce2/Bounce2.h \
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\NoteToPitch.h \
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiHelper.h \
  C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\MidiSequencer.h \
@@ -49,7 +49,7 @@ C:\Users\thoma\AppData\Local\Temp\VMBuilds\MainMidiController\teensy35\Debug\Mai
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/Adafruit_GFX.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\cores\teensy3/Print.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_GFX/gfxfont.h \
- D:\Benutzer\Thomas\Dokumente\Arduino\libraries\Adafruit_SSD1306/Adafruit_SSD1306.h \
+ d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Adafruit_SSD1306/Adafruit_SSD1306.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/Encoder.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/utility/direct_pin_read.h \
  d:\Program\ Files\ (x86)\Arduino\hardware\teensy\avr\libraries\Encoder/utility/interrupt_pins.h \
